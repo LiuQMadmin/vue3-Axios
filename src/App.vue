@@ -1,30 +1,45 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+  <div id="app">
+    <Header />
+    <router-view />
+    <Tap />
   </div>
-  <router-view/>
 </template>
-
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
+<script>
+import { watch } from "vue";
+import Header from "./components/header";
+import Tap from "./components/tap";
+import { useRouter } from "vue-router";
+import { useStore } from "vuex";
+export default {
+  name: 'App',
+  components: {
+    Header,
+    Tap
+  },
+  setup () {
+    let store = useStore();
+    let router = useRouter();
+    /**
+     * watch的使用
+     */
+    watch(() => {
+      return router.currentRoute.value.name;
+    }, (valueName) => {
+      let data = null;
+      switch(valueName) {
+        case "DayPage": data = "当天信息"; break;
+        case "MonthPage": data = "当月信息"; break;
+        case "YearPage": data = "当年信息"; break;
+        default: break;
+      }
+      /**
+       * 触发分包之后的mutations函数
+       */
+      store.commit("day/changeTitle", data);
+    })
   }
 }
+</script>
+<style lang="scss">
 </style>
